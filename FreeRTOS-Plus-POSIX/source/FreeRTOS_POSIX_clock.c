@@ -106,7 +106,11 @@ int clock_gettime( clockid_t clock_id,
 
     /* Adjust the tick count for the number of times a TickType_t has overflowed.
      * portMAX_DELAY should be the maximum value of a TickType_t. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshift-count-overflow"
     ullTickCount = ( uint64_t ) ( xCurrentTime.xOverflowCount ) << ( sizeof( TickType_t ) * 8 );
+#pragma GCC diagnostic pop
+
 
     /* Add the current tick count. */
     ullTickCount += xCurrentTime.xTimeOnEntering;
