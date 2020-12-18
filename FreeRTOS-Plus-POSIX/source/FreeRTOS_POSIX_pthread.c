@@ -159,6 +159,60 @@ int pthread_attr_getdetachstate( const pthread_attr_t * attr,
     return 0;
 }
 
+#ifdef GRPC_COMPAT
+int pthread_detach(pthread_t thread)
+{
+    return 0;
+}
+int pthread_atfork(void (*prepare)(void),
+                   void (*parent)(void),
+                   void (*child)(void))
+{
+    return 0;
+}
+
+//http://web.mit.edu/ghudson/sipb/pthreads/pthreads/pthread_once.c
+int pthread_once(pthread_once_t *once_control, void (*init_routine)(void))
+{
+	/* Check first for speed */
+	if (once_control->state == PTHREAD_NEEDS_INIT) {
+		pthread_mutex_lock(&(once_control->mutex));
+		if (once_control->state == PTHREAD_NEEDS_INIT) {
+			init_routine();
+			once_control->state = PTHREAD_DONE_INIT;
+		}
+		pthread_mutex_unlock(&(once_control->mutex));
+	}
+	return(0);
+}
+
+int pthread_key_create( pthread_key_t *key, void (*destructor)(void *))
+{
+#if (configNUM_THREAD_LOCAL_STORAGE_POINTERS < 1)
+#error "Pthread TLS requires configNUM_THREAD_LOCAL_STORAGE_POINTERS >= 1)"
+#endif
+    *key = configNUM_THREAD_LOCAL_STORAGE_POINTERS - 1;
+    return *key;
+}
+
+void *pthread_getspecific(pthread_key_t key)
+{
+    return pvTaskGetThreadLocalStoragePointer( NULL, key );
+
+}
+
+int pthread_setspecific(pthread_key_t key, void *value)
+{
+    vTaskSetThreadLocalStoragePointer( NULL, key, value );
+    return 0;
+}
+
+int pthread_condattr_init(pthread_condattr_t *attr)
+{
+    return 0;
+}
+#endif //GRPC_COMPAT
+
 /*-----------------------------------------------------------*/
 
 int pthread_attr_getschedparam( const pthread_attr_t * attr,

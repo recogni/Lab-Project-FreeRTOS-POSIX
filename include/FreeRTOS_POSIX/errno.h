@@ -39,6 +39,9 @@
 /* Undefine all errnos to avoid redefinition errors with system errnos. */
 #undef EPERM
 #undef ENOENT
+#ifdef GRPC_COMPAT
+#undef ESRCH
+#endif
 #undef EBADF
 #undef EAGAIN
 #undef ENOMEM
@@ -61,6 +64,9 @@
 /**@{ */
 #define EPERM           1   /**< Operation not permitted. */
 #define ENOENT          2   /**< No such file or directory. */
+#ifdef GRPC_COMPAT
+#define ESRCH           3   /**< No such process. */
+#endif
 #define EBADF           9   /**< Bad file descriptor. */
 #define EAGAIN          11  /**< Resource unavailable, try again. */
 #define ENOMEM          12  /**< Not enough space. */

@@ -76,4 +76,9 @@
 #define O_WRONLY    0x8000  /**< Open for writing only. */
 /**@} */
 
+#ifdef GRPC_COMPAT
+#include "sys/types.h"
+#include "hal_os.h"
+#endif
+
 #endif /* ifndef _FREERTOS_POSIX_FCNTL_H_ */

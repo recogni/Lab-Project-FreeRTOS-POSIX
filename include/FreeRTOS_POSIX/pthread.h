@@ -498,4 +498,29 @@ int pthread_setschedparam( pthread_t thread,
                            int policy,
                            const struct sched_param * param );
 
+#ifdef GRPC_COMPAT
+typedef struct {
+         //short init;
+         //short exec;
+         short state;
+         pthread_mutex_t mutex;
+ } pthread_once_t;
+
+ /* Static pthread_once_t initialization value. */
+#define PTHREAD_NEEDS_INIT	0
+#define PTHREAD_DONE_INIT	1
+
+ #define PTHREAD_ONCE_INIT {FALSE,PTHREAD_MUTEX_INITIALIZER};
+
+int pthread_condattr_init(pthread_condattr_t *attr);
+int pthread_once(pthread_once_t *once_control, void (*init_routine)(void));
+
+typedef int pthread_key_t;
+int pthread_key_create( pthread_key_t *key, void (*destructor)(void *));
+void *pthread_getspecific(pthread_key_t key);
+int pthread_setspecific(pthread_key_t key, void *value);
+
+int pthread_detach(pthread_t thread);
+int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void));
+#endif //GRPC_COMPAT
 #endif /* _FREERTOS_POSIX_PTHREAD_H_ */
